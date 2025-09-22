@@ -6,6 +6,8 @@ import { PortalHost } from '@rn-primitives/portal';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from 'nativewind';
+import { I18nextProvider } from 'react-i18next';
+import i18n from 'i18next';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -17,9 +19,11 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
-      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      <Stack />
-      <PortalHost />
+      <I18nextProvider i18n={i18n} defaultNS={'translation'}>
+        <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+        <Stack />
+        <PortalHost />
+      </I18nextProvider>
     </ThemeProvider>
   );
 }
