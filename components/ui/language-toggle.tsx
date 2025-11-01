@@ -1,13 +1,14 @@
-import i18n from 'i18next';
-import { Button } from '@/components/ui/button';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LANGUAGE_KEY } from '@/src/i18n';
-import { Text } from '@/components/ui/text';
+import { LANGUAGE_KEY } from '@/i18n';
+import DropdownMenu from '../DropdownMenu';
+import { useTranslation } from 'react-i18next';
+import { Text } from './text';
 
 export default function LanguageToggle() {
-  const [language, setLanguage] = useState<'en' | 'ne'>('en');
+  const [language, setLanguage] = useState<string>('en');
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     const loadLanguage = async () => {
@@ -19,16 +20,28 @@ export default function LanguageToggle() {
     loadLanguage();
   }, []);
 
-  const toggleLanguage = async () => {
-    const newLang = language === 'en' ? 'ne' : 'en';
+  const toggleLanguage = async (newLang: string) => {
     setLanguage(newLang);
     i18n.changeLanguage(newLang);
     await AsyncStorage.setItem(LANGUAGE_KEY, newLang);
   };
 
+  const languages = [
+    { label: '🇬🇧 English ', value: 'en' },
+    { label: '🇳🇵 Nepali ', value: 'ne' },
+  ];
+
+  const found = languages.find((i) => i.value === language);
   return (
-    <Button onPress={toggleLanguage} size="icon" variant="ghost" className="rounded-full web:mx-4">
-      <Text variant={'large'}>{language === 'en' ? '🇺🇸' : '🇳🇵'}</Text>
-    </Button>
+    <DropdownMenu
+      defaultvalue={found}
+      value={language}
+      data={languages}
+      onChange={(v) => {
+        if (v) {
+          toggleLanguage(v);
+        }
+      }}
+    />
   );
 }
